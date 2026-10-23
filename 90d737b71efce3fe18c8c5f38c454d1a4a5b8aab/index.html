@@ -56,7 +56,7 @@ tr.kdet td{padding:2px 10px 10px 44px;border-bottom:1px solid #e0e0e0;background
 .sharepanel .row a{color:var(--accent);font-weight:700;text-decoration:none}.copied{color:var(--good);font-size:12px;font-weight:700;min-width:56px}
 @media print{.sharebar,.sharepanel{display:none!important}}
 </style>
-<div class="sharebar noprint"><span class="copied" id="shmsg"></span><button class="ghost" id="shone" style="display:none"></button><button id="shopen">Share brand link</button></div>
+<div class="sharebar noprint"><span class="copied" id="shmsg"></span><button class="ghost" id="shone" style="display:none"></button><button class="ghost" id="shjump" style="display:none"></button><button id="shopen">Share brand link</button></div>
 <div class="sharepanel noprint" id="shpanel"><div class="box"><div class="hd"><h2>Share brand link</h2><button id="shclose">Close</button></div>
 <div class="small muted" style="padding:10px 18px">Client-facing brand pages. Copy a link to send to a brand.</div><div id="shlist"></div></div></div>
 <script>
@@ -69,7 +69,7 @@ window.addEventListener("DOMContentLoaded",()=>{const B=[...D.brands].sort((a,b)
  q("#shlist").querySelectorAll(".shcp").forEach(x=>x.onclick=()=>cp(x.dataset.u,x.nextElementSibling));
  q("#shopen").onclick=()=>q("#shpanel").classList.add("open");q("#shclose").onclick=()=>q("#shpanel").classList.remove("open");
  q("#shpanel").onclick=ev=>{if(ev.target.id==="shpanel")q("#shpanel").classList.remove("open")};
- const one=()=>{const b=params().brand&&brandBy(params().brand),o=q("#shone");if(b){o.style.display="";o.textContent="Copy share link for "+b.name;o.onclick=()=>cp(url(b.slug),q("#shmsg"))}else o.style.display="none"};
+ const one=()=>{const b=params().brand&&brandBy(params().brand),o=q("#shone");if(b){o.style.display="";o.textContent="Copy share link for "+b.name;o.onclick=()=>cp(url(b.slug),q("#shmsg"));const j=q("#shjump");j.style.display="";j.textContent="Jump to "+b.name+" page";j.onclick=()=>{location.href=url(b.slug)}}else{o.style.display="none";q("#shjump").style.display="none"}};
  window.addEventListener("hashchange",one);one()})})();
 </script><nav class="crumbs" id="crumbs"></nav><main id="app"></main>
 <footer>Rise E-Commerce &nbsp;|&nbsp; Listing Health Tracker &nbsp;|&nbsp; Scores are based on Amazon's Product Type Definitions plus Rise listing standards. Design (images, A+, video) is tracked separately. Brand % = child + standalone listings; variation parents are scored separately on parent-level fields.</footer>
