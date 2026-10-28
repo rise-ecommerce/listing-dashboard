@@ -79,15 +79,15 @@ function allBrands(){const L=D.listings;
   bindSort("brandtbl",draw);document.querySelectorAll("#brandtbl tr.click").forEach(tr=>tr.onclick=()=>go({brand:tr.dataset.b}))};draw();
  $("#bsel").onchange=e=>e.target.value&&go({brand:e.target.value})}
 function gapsOf(L){const g={},ap={};L.forEach(l=>l.fields.forEach(f=>{ap[f[0]]=(ap[f[0]]||0)+1;if(f[2]!=="FILLED")g[f[0]]=(g[f[0]]||0)+1}));
- return Object.keys(g).map(k=>({k,n:g[k],of:ap[k]})).sort((a,b)=>b.n-a.n)}
+ return Object.keys(g).map(k=>({k,n:g[k],of:ap[k],f:ap[k]-g[k]})).sort((a,b)=>a.f/a.of-b.f/b.of||b.n-a.n)}
 function brandView(b){const L=D.listings.filter(l=>l.b===b.slug);const P=(D.parents||[]).filter(p=>p.b===b.slug);const fams={};L.forEach(l=>(fams[l.fam]=fams[l.fam]||[]).push(l));
  const gaps=gapsOf(L).slice(0,10);
  $("#app").innerHTML=`<div class="grid g2" style="margin-bottom:16px"><div class="card"><h2>${esc(b.name)}: overall</h2>
  <div style="display:flex;gap:40px;justify-content:center;padding:6px 0">${ring(b.c,"Completion")}${ring(b.s,"SEO fillability")}<div class="kpi" style="align-self:center"><div class="v">${L.length}</div><div class="l">Listings</div><div class="small muted" style="margin-top:6px">${L.filter(l=>l.err).length} with Amazon errors</div>${P.length?`<div class="small muted" style="margin-top:6px">${P.length} parent listing${P.length>1?"s":""} · avg ${avg(P,"c").toFixed(1)}%<br><i>(parents scored separately; not in brand %)</i></div>`:""}</div></div>
  <h2 style="margin-top:14px">By product family</h2><table><thead><tr><th>Family</th><th>Listings</th><th>Completion</th><th>SEO</th></tr></thead><tbody>
  ${Object.entries(fams).map(([f,x])=>`<tr><td>${esc(f)}</td><td>${x.length}</td><td>${bar(avg(x,"c"))}</td><td>${bar(avg(x,"s"))}</td></tr>`).join("")}</tbody></table></div>
- <div class="card"><h2>Top gaps</h2><div class="small muted" style="margin-bottom:8px">Listings missing or below standard, of those where the field applies</div>
- ${gaps.map(g=>`<div class="gapbar"><div class="n">${FN(g.k)}</div><div class="bar"><i style="width:${100*g.n/g.of}%;background:var(--bad)"></i></div><div class="small" style="width:70px;text-align:right">${g.n} / ${g.of}</div></div>`).join("")||"<p class=muted>No gaps 🎉</p>"}</div></div>
+ <div class="card"><h2>Field Completion</h2><div class="small muted" style="margin-bottom:8px">Listings with the field filled, of those where it applies</div>
+ ${gaps.map(g=>`<div class="gapbar"><div class="n">${FN(g.k)}</div><div class="bar"><i style="width:${100*g.f/g.of}%;background:var(--good)"></i></div><div class="small" style="width:70px;text-align:right">${g.f} / ${g.of}</div></div>`).join("")||"<p class=muted>Every field filled 🎉</p>"}</div></div>
  <div class="card"><div class="toolbar"><h2 style="margin:0">Listings</h2><span class="small muted">${P.length} variation famil${P.length===1?"y":"ies"} (collapsed) · click ›  to show children</span><button class="noprint" id="xa">Expand all</button><button class="noprint ghost" id="ca">Collapse all</button><input class="noprint" id="q" placeholder="Search title, SKU, ASIN…" style="margin-left:auto;min-width:260px"></div><div id="lt"></div></div>`;
  const PB={};P.forEach(p=>PB[p.sku]=p);
  const FAMS=[];const byPar={};L.forEach(l=>{if(l.par&&PB[l.par]){(byPar[l.par]=byPar[l.par]||[]).push(l)}else FAMS.push({std:1,p:l,kids:[]})});
